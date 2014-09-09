@@ -23,7 +23,7 @@ public class ShortenController {
     @Autowired
     private StringRedisTemplate redis;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/short/{id}", method = RequestMethod.GET)
     public void redirect(@PathVariable String id, HttpServletResponse response) throws Exception {
         final String url = redis.opsForValue().get(id);
         if (url != null)
