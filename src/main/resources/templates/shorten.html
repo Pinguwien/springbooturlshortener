@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>URL Shortener Test Page</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script>
+        shortener = (function () {
+
+            var setClickHandler = function () {
+                console.log("init clickhandler");
+
+                $('#btnSubmit').click(function () {
+                    btnClick();
+                });
+            }
+            var btnClick = function () {
+                console.log("clickHandling");
+                if ($('#website').val()) {
+                    var value =  $('#website').val();
+                    console.log("there's a page! yay! Val: " + value);
+
+                    var websiteData = "url="+value;
+
+                    $.ajax({
+                        url: "http://localhost:8080/shortIt",
+                        type: "POST",
+                        traditional: true,
+                        data: websiteData,
+                        contentType: "application/x-www-form-urlencoded",
+                        dataType: "text",
+                        statusCode: {
+                            500: function () {
+                                console.log("server 500");
+                                var message = "NO!";
+                                $("#result")
+                                        .html("")
+                                        .html(message);
+                            }
+                        }
+                    })
+                    .success(function (data) {
+                        console.log("Yay! Data: " + data);
+                        $("#result")
+                                .html("")
+                                .html("ShortUrl (Haha): " + data);
+                    }).error(function(data){
+                                console.log("server: unknown error" + data.responseText);
+                            });
+                } else {
+                    $("#result")
+                            .html("")
+                            .html("Fehler: Bitte irgendwas eingeben...!");
+                }
+            };
+
+            var init = function () {
+                console.log("initting");
+                setClickHandler();
+            };
+            return {
+                init: init
+            };
+        })();
+
+        $(document).ready(function () {
+            console.log("init shortener");
+            shortener.init();
+        });
+    </script>
+</head>
+<body>
+<p>Test URL Shortener</p>
+
+    <input id="website" name="url" placeholder="Enter Website" />
+    <button id="btnSubmit">Shorten</button>
+<div id="result"></div>
+</body>
+</html>
